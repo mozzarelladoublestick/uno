@@ -33,7 +33,43 @@ function isMoveLegal(cardColor, cardNumber, card2) {
   // Check if the colors match or the numbers match
   return color1 === color2 || number1 === number2;
 }
+/*
+function initializeDrawPile() {
+  const colors = ['red', 'blue', 'green', 'yellow'];
+  const numbers = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
 
+  // Create Uno deck with cards of different colors and numbers for the draw pile
+  for (const color of colors) {
+    for (const number of numbers) {
+      drawPile.push(`${color} ${number}`);
+    }
+  }
+
+  // Shuffle the draw pile
+  for (let i = drawPile.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [drawPile[i], drawPile[j]] = [drawPile[j], drawPile[i]];
+  }
+
+  const initialCard = drawPile.pop();
+  //discardPile.push(initialCard);
+  socketIO.emit('movedToDiscardPile', {
+    cardNumber: cardNumber,
+    cardColor: cardColor
+  });*
+  return initialCard;
+}
+*/
+
+/*drawCard(player: Party.Connection) {
+  if (this.drawPile.length === 0) {
+    this.drawPile = this.shufflePlayedCards();
+  }
+
+  const drawnCard = this.drawPile.pop();
+  player.send(`drawnCard:${drawnCard}`);
+}
+*/
 
 socketIO.on('connection', (socket) => {
   console.log(`⚡: ${socket.id} user just connected!`);
@@ -96,6 +132,15 @@ socketIO.on('connection', (socket) => {
   
 
   });
+  socket.on('drawCard', () =>{
+  let cardColor= 'red';
+  let cardNumber = '8';
+  //console.log(drawnCard);
+  socketIO.emit('drawCard', {
+    cardColor: cardColor,
+    cardNumber:cardNumber
+  });
+  })
 });
 
 app.get('/api', (req, res) => {

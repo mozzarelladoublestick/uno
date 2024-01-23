@@ -29,6 +29,9 @@ function App() {
     socket.on('illegalMove',() =>  {
   setIllegal("you cannot do this. only move card same color or same number ok thank u");
     });
+    socket.on('drawCard', (data)=>{
+    addCard(data.cardNumber, data.cardColor);
+    })
   }, []);
 
   function startGame() {
@@ -38,8 +41,13 @@ function App() {
       socketID: socket.id,
     });
   }
-
+function drawCard(){
+  socket.emit('drawCard');
+}
   function addCard(cardNumber, cardColor) {
+    const drawpile = document.getElementsByClassName("drawpile")[0];
+    drawpile.style.display = "block";
+
     const card = document.createElement("div");
 
     console.log(cardNumber);
@@ -112,10 +120,13 @@ function App() {
           <li key={index}>{user}</li>
         ))}
       </ul>
+  
       <div id="discardPile"></div>
   <div id="handCards"></div>
+
   <h4>{illegal}</h4>
       <button onClick={dealCards}>give me my cards</button>
+      <div className="drawpile" onClick={drawCard}></div>
     </div>
   );
 }
