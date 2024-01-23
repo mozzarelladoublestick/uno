@@ -7,6 +7,7 @@ function App() {
   const [message, setMessage] = useState('yello');
   const [users, setUsers] = useState([]);
   const [handCards, setHandCards] = useState([]);
+  const [illegal, setIllegal] =useState("")
   let isFirstCard = true;
   useEffect(() => {
     socket.on('login', (data) => setUsers((prevUsers) => [...prevUsers, data.text]));
@@ -24,7 +25,10 @@ function App() {
     });
     socket.on('movedToDiscardPile', (data)=>{
       movedCardToDiscardPile(data.cardColor, data.cardNumber);
-    })
+    });
+    socket.on('illegalMove',() =>  {
+  setIllegal("you cannot do this. only move card same color or same number ok thank u");
+    });
   }, []);
 
   function startGame() {
@@ -43,6 +47,7 @@ function App() {
     card.textContent = cardNumber;
     card.className = `card ${cardColor}`;
     card.onclick = () => {
+      setIllegal("");
       socket.emit('moveToDiscardPile',{
         cardNumber: cardNumber,
         cardColor: cardColor,
@@ -109,6 +114,7 @@ function App() {
       </ul>
       <div id="discardPile"></div>
   <div id="handCards"></div>
+  <h4>{illegal}</h4>
       <button onClick={dealCards}>give me my cards</button>
     </div>
   );

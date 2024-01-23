@@ -89,9 +89,9 @@ socketIO.on('connection', (socket) => {
           cardNumber: cardNumber,
           cardColor: cardColor
         });
-      } /*else {
-       // player.send(`illegalMove:${cardText}`);
-      }*/
+      } else {
+       socket.emit('illegalMove');
+      }
     
   
 
