@@ -168,6 +168,5 @@ h6 {
   grid-column-end: 4;
   display: flex;
   flex-direction: column;
-
   align-items: center;
 }
