@@ -79,14 +79,15 @@ function App() {
   
       const handCards = document.getElementsByClassName("card");
   
-     /* for (let i = 0; i < handCards.length; i++) {
+      for (let i = 0; i < handCards.length; i++) {
         const handCard = handCards[i];
-        if (handCard.textContent === discardedCard.textContent && handCard.className.split(" ")[1] === discardedCard.className.split(" ")[2]) {
+        console.log(handCard);
+       if (handCard.textContent === discardedCard.textContent && handCard.className.split(" ")[1] === discardedCard.className.split(" ")[2]) {
           handCard.remove();
           break; // Assuming there is only one matching card in the hand
         }
       }
-      */
+      
     }
     isFirstCard = false;
   }
