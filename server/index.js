@@ -25,6 +25,15 @@ function shuffleDeck() {
     [deck[i], deck[j]] = [deck[j], deck[i]];
   }
 }
+function isMoveLegal(cardColor, cardNumber, card2) {
+  let card1= cardColor +" "+ cardNumber;
+  const [color1, number1] = card1.split(" ");
+  const [color2, number2] = card2.split(" ");
+
+  // Check if the colors match or the numbers match
+  return color1 === color2 || number1 === number2;
+}
+
 
 socketIO.on('connection', (socket) => {
   console.log(`⚡: ${socket.id} user just connected!`);
@@ -67,6 +76,25 @@ socketIO.on('connection', (socket) => {
     // Deal 7 cards to each player
     const playerCards = deck.splice(0, 7);
     socketIO.to(socket.id).emit('yourCards', { cards: playerCards.join(',') });
+  });
+  socket.on('moveToDiscardPile', (data) =>{
+    const cardNumber = data.cardNumber;
+    const cardColor=data.cardColor;
+      const lastCardOnDiscardPile = discardPile[discardPile.length - 1];
+      // Check if the move is legal according to Uno rules
+      if (!lastCardOnDiscardPile || isMoveLegal(cardNumber, cardColor, lastCardOnDiscardPile)) {
+        let cardText=cardNumber+" "+cardColor;
+        discardPile.push(cardText);
+        socketIO.emit('movedToDiscardPile', {
+          cardText: cardText,
+          cardColor: cardColor
+        });
+      } else {
+       // player.send(`illegalMove:${cardText}`);
+      }
+    
+  
+
   });
 });
 

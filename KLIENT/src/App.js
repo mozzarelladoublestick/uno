@@ -7,7 +7,7 @@ function App() {
   const [message, setMessage] = useState('yello');
   const [users, setUsers] = useState([]);
   const [handCards, setHandCards] = useState([]);
-
+  let isFirstCard = true;
   useEffect(() => {
     socket.on('login', (data) => setUsers((prevUsers) => [...prevUsers, data.text]));
     socket.on('yourCards', (data) => {
@@ -15,10 +15,16 @@ function App() {
       const cards = cardsString.split(',');
 
       cards.forEach((cardText) => {
-        const color = cardText.split(" ")[0]; // Extract color from cardText
-        addCard(cardText, color);
+        let contents = cardText.split(' ');
+        let cardColor = contents[0];
+        let cardNumber = contents[1];
+        addCard(cardNumber, cardColor);
+
       });
     });
+    socket.on('movedToDiscardPile', (data)=>{
+      movedCardToDiscardPile(data.cardColor, data.cardNumber);
+    })
   }, []);
 
   function startGame() {
@@ -29,12 +35,19 @@ function App() {
     });
   }
 
-  function addCard(cardText, color) {
+  function addCard(cardNumber, cardColor) {
     const card = document.createElement("div");
-    card.textContent = cardText.split(" ")[1];
-    card.className = `card ${color}`;
+
+    console.log(cardNumber);
+    console.log(cardColor);
+    card.textContent = cardNumber;
+    card.className = `card ${cardColor}`;
     card.onclick = () => {
-      socket.emit(`moveToDiscardPile:${cardText}`);
+      socket.emit('moveToDiscardPile',{
+        cardNumber: cardNumber,
+        cardColor: cardColor,
+        socketID: socket.id
+      });
     };
     const handCards = document.getElementById('handCards');
     handCards.appendChild(card);
@@ -53,6 +66,32 @@ function App() {
     });
   }
 
+  function movedCardToDiscardPile(cardColor, cardNumber) {
+    const discardPileContainer = document.getElementById("discardPile");
+    const discardedCard = document.createElement("div");
+    discardedCard.textContent = cardNumber;
+  
+  
+    discardedCard.className = `card discard-pile-card ${cardColor}`;
+    discardPileContainer.appendChild(discardedCard);
+  
+    if (!isFirstCard) {
+  
+      const handCards = document.getElementsByClassName("card");
+  
+     /* for (let i = 0; i < handCards.length; i++) {
+        const handCard = handCards[i];
+        if (handCard.textContent === discardedCard.textContent && handCard.className.split(" ")[1] === discardedCard.className.split(" ")[2]) {
+          handCard.remove();
+          break; // Assuming there is only one matching card in the hand
+        }
+      }
+      */
+    }
+    isFirstCard = false;
+  }
+  
+
   return (
     <div>
       <h2>Login</h2>
@@ -67,6 +106,7 @@ function App() {
           <li key={index}>{user}</li>
         ))}
       </ul>
+      <div id="discardPile"></div>
   <div id="handCards"></div>
       <button onClick={dealCards}>give me my cards</button>
     </div>
