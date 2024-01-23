@@ -86,7 +86,7 @@ socketIO.on('connection', (socket) => {
         let cardText=cardNumber+" "+cardColor;
         discardPile.push(cardText);
         socketIO.emit('movedToDiscardPile', {
-          cardText: cardText,
+          cardNumber: cardNumber,
           cardColor: cardColor
         });
       } else {

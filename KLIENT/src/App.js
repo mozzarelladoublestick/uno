@@ -71,7 +71,7 @@ function App() {
     const discardedCard = document.createElement("div");
     discardedCard.textContent = cardNumber;
   
-  
+    console.log(cardNumber);
     discardedCard.className = `card discard-pile-card ${cardColor}`;
     discardPileContainer.appendChild(discardedCard);
   
