@@ -26,7 +26,7 @@ function shuffleDeck() {
   }
 }
 function isMoveLegal(cardColor, cardNumber, card2) {
-  let card1= cardColor +" "+ cardNumber;
+  let card1 = cardColor + " " + cardNumber;
   const [color1, number1] = card1.split(" ");
   const [color2, number2] = card2.split(" ");
 
@@ -65,11 +65,11 @@ socketIO.on('connection', (socket) => {
       }
 
       shuffleDeck();
-     /* users.forEach(user => {
-        const playerCards = deck.splice(0, 7);
-        //socketIO.to(user).emit('yourCards', { cards: playerCards.join(',') }); fix thos
-        
-      });*/
+      /* users.forEach(user => {
+         const playerCards = deck.splice(0, 7);
+         //socketIO.to(user).emit('yourCards', { cards: playerCards.join(',') }); fix thos
+         
+       });*/
 
     }
 
@@ -77,23 +77,34 @@ socketIO.on('connection', (socket) => {
     const playerCards = deck.splice(0, 7);
     socketIO.to(socket.id).emit('yourCards', { cards: playerCards.join(',') });
   });
-  socket.on('moveToDiscardPile', (data) =>{
+
+  socket.on('drawCard', () => {
+    if (deck.length === 0) {
+      socket.emit('noMoreCards');
+    } else {
+      const card = deck.pop();
+      socketIO.to(socket.id).emit('drawCard', { card: card });
+    }
+  });
+
+  socket.on('moveToDiscardPile', (data) => {
     const cardNumber = data.cardNumber;
-    const cardColor=data.cardColor;
-      const lastCardOnDiscardPile = discardPile[discardPile.length - 1];
-      // Check if the move is legal according to Uno rules
-      if (!lastCardOnDiscardPile || isMoveLegal(cardNumber, cardColor, lastCardOnDiscardPile)) {
-        let cardText=cardNumber+" "+cardColor;
-        discardPile.push(cardText);
-        socketIO.emit('movedToDiscardPile', {
-          cardNumber: cardNumber,
-          cardColor: cardColor
-        });
-      } else {
-       socket.emit('illegalMove');
-      }
-    
-  
+    const cardColor = data.cardColor;
+    const lastCardOnDiscardPile = discardPile[discardPile.length - 1];
+    // Check if the move is legal according to Uno rules
+    if (!lastCardOnDiscardPile || isMoveLegal(cardNumber, cardColor, lastCardOnDiscardPile)) {
+      let cardText = cardNumber + " " + cardColor;
+      discardPile.push(cardText);
+      socketIO.emit('movedToDiscardPile', {
+        cardNumber: cardNumber,
+        cardColor: cardColor
+      });
+    } else {
+      socket.emit('illegalMove');
+    }
+
+
+
 
   });
 });
