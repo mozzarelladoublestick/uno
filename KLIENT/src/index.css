@@ -19,6 +19,12 @@ body {
   color: #333;
   margin: 20px 0;
 }
+.hide{
+  display: none;
+}
+.show{
+  display: block;
+}
 
 #info{
   padding-left: 15px;

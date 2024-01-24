@@ -12,7 +12,11 @@ function App() {
   const [illegal, setIllegal] = useState("")
   let isFirstCard = true;
   useEffect(() => {
-    socket.on('login', (data) => setUsers((prevUsers) => [...prevUsers, data.text]));
+    socket.on('login', (data) => {
+      setUsers((prevUsers) => [...prevUsers, data.text])
+    
+
+    });
     socket.on('yourCards', (data) => {
       const cardsString = data.cards;
       const cards = cardsString.split(',');
@@ -38,6 +42,15 @@ function App() {
     socket.on('illegalMove', () => {
       setIllegal("you cannot do this. only move card same color or same number ok thank u");
     });
+    return () => {
+      // Clean up event listeners when the component is unmounted
+      socket.off('login');
+      socket.off('yourCards');
+      socket.off('movedToDiscardPile');
+      socket.off('illegalMove');
+      socket.off('drawCard')
+      // Remove other event listeners here
+    };
   }, []);
 
   function startGame() {
@@ -46,6 +59,7 @@ function App() {
       text: message, // Use 'text' instead of 'message'
       socketID: socket.id,
     });
+
   }
 
   function addCard(cardNumber, cardColor) {
@@ -82,6 +96,8 @@ function App() {
       username: username,
       socketID: socket.id
     });
+    document. getElementById("login"). className = "hide";
+    document. getElementById("game"). className = "show";
   }
 
   function movedCardToDiscardPile(cardColor, cardNumber) {
@@ -116,15 +132,16 @@ function App() {
     <div className='App'>
     <LoginButton />
     </div>
-
-    <h2>Login</h2>
+      <div id="login">
+      <h2>Login</h2>
       <label>
         Username:
         <input type="text" value={username} onChange={(e) => setUsername(e.target.value)} />
       </label>
       <button onClick={login}>start game</button>
-
-    <h2>Users</h2>
+      </div>
+      <div id="game" className='hide'>
+      <h2>Users</h2>
       <ul>
         {users.map((user, index) => (
           <li key={index}>{user}</li>
@@ -138,6 +155,7 @@ function App() {
       <div id="handCards"></div>
       <h4>{illegal}</h4>
       <button onClick={dealCards}>give me my cards</button>
+      </div>
     </div>
   );
 }
