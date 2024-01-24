@@ -1,6 +1,7 @@
 import socketIO from 'socket.io-client';
 import React, { useEffect, useState, useRef } from 'react';
 import './App.css';
+import LoginButton from './compontents/LoginButton';
 
 const socket = socketIO.connect('http://localhost:4000');
 
@@ -145,6 +146,9 @@ function App() {
 
   return (
     <div>
+    <div className='App'>
+    <LoginButton />
+    </div>
       <div id="login">
       <h2>Login</h2>
       <label>
@@ -174,3 +178,12 @@ function App() {
 }
 
 export default App;
+
+
+/*
+
+<div>
+      
+      
+
+*/ 
