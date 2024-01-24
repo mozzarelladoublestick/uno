@@ -1,6 +1,7 @@
 import socketIO from 'socket.io-client';
 import React, { useEffect, useState, useRef } from 'react';
 import '../App.css';
+import LogoutButton from '../compontents/LogoutButton';
 
 const socket = socketIO.connect('http://localhost:4000');
 
@@ -173,6 +174,7 @@ function UnoGame() {
       <h4> {message}</h4>
       <button onClick={dealCards}>give me my cards</button>
       </div>
+      <LogoutButton />
     </div>
   );
 }
