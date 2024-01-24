@@ -41,6 +41,15 @@ function App() {
     socket.on('illegalMove', () => {
       setIllegal("you cannot do this. only move card same color or same number ok thank u");
     });
+    return () => {
+      // Clean up event listeners when the component is unmounted
+      socket.off('login');
+      socket.off('yourCards');
+      socket.off('movedToDiscardPile');
+      socket.off('illegalMove');
+      socket.off('drawCard')
+      // Remove other event listeners here
+    };
   }, []);
 
   function startGame() {
