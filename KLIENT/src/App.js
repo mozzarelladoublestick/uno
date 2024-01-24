@@ -44,6 +44,7 @@ function App() {
     });
     socket.on('endGame', (data)=>{
       setMessage(data.username + " won the game");
+      console.log(data.username + " won the game")
     })
     return () => {
       // Clean up event listeners when the component is unmounted
@@ -171,6 +172,7 @@ function App() {
       </div>
       <div id="handCards"></div>
       <h4>{illegal}</h4>
+      <h4> {message}</h4>
       <button onClick={dealCards}>give me my cards</button>
       </div>
     </div>
