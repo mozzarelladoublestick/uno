@@ -41,6 +41,9 @@ function App() {
     socket.on('illegalMove', () => {
       setIllegal("you cannot do this. only move card same color or same number ok thank u");
     });
+    socket.on('endGame', (data)=>{
+      setMessage(data.username + " won the game");
+    })
     return () => {
       // Clean up event listeners when the component is unmounted
       socket.off('login');
@@ -123,7 +126,21 @@ function App() {
 
     }
     isFirstCard = false;
+   
+    const handCardsContainer = document.getElementById('handCards');
+    const remainingHandCards = handCardsContainer.getElementsByClassName('card');
+   console.log(remainingHandCards);
+   console.log(remainingHandCards.length);
+    if(remainingHandCards.length<3){
+      console.log("kleiner 3")
+      socket.emit('endGame', {
+        username: username,
+        socketID: socket.id
+      });
+    }
+    
   }
+
 
 
   return (

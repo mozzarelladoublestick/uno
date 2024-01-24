@@ -86,6 +86,13 @@ socketIO.on('connection', (socket) => {
       socketIO.to(socket.id).emit('drawCard', { card: card });
     }
   });
+  socket.on('endGame', (data)=>{
+    console.log("kleiner")
+    socketIO.emit('endGame', {
+      username: data.username,
+      socketID: data.socketID
+    })
+  })
 
   socket.on('moveToDiscardPile', (data) => {
     const cardNumber = data.cardNumber;
