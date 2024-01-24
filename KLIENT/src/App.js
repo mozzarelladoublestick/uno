@@ -1,6 +1,7 @@
 import socketIO from 'socket.io-client';
 import React, { useEffect, useState, useRef } from 'react';
 import './App.css';
+import LoginButton from './compontents/LoginButton';
 
 const socket = socketIO.connect('http://localhost:4000');
 
@@ -112,13 +113,18 @@ function App() {
 
   return (
     <div>
-      <h2>Login</h2>
+    <div className='App'>
+    <LoginButton />
+    </div>
+
+    <h2>Login</h2>
       <label>
         Username:
         <input type="text" value={username} onChange={(e) => setUsername(e.target.value)} />
       </label>
       <button onClick={login}>start game</button>
-      <h2>Users</h2>
+
+    <h2>Users</h2>
       <ul>
         {users.map((user, index) => (
           <li key={index}>{user}</li>
@@ -137,3 +143,12 @@ function App() {
 }
 
 export default App;
+
+
+/*
+
+<div>
+      
+      
+
+*/ 
