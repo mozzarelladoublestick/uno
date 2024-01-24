@@ -11,7 +11,11 @@ function App() {
   const [illegal, setIllegal] = useState("")
   let isFirstCard = true;
   useEffect(() => {
-    socket.on('login', (data) => setUsers((prevUsers) => [...prevUsers, data.text]));
+    socket.on('login', (data) => {
+      setUsers((prevUsers) => [...prevUsers, data.text])
+    
+
+    });
     socket.on('yourCards', (data) => {
       const cardsString = data.cards;
       const cards = cardsString.split(',');
@@ -45,6 +49,7 @@ function App() {
       text: message, // Use 'text' instead of 'message'
       socketID: socket.id,
     });
+
   }
 
   function addCard(cardNumber, cardColor) {
@@ -81,6 +86,8 @@ function App() {
       username: username,
       socketID: socket.id
     });
+    document. getElementById("login"). className = "hide";
+    document. getElementById("game"). className = "show";
   }
 
   function movedCardToDiscardPile(cardColor, cardNumber) {
@@ -112,12 +119,15 @@ function App() {
 
   return (
     <div>
+      <div id="login">
       <h2>Login</h2>
       <label>
         Username:
         <input type="text" value={username} onChange={(e) => setUsername(e.target.value)} />
       </label>
       <button onClick={login}>start game</button>
+      </div>
+      <div id="game" className='hide'>
       <h2>Users</h2>
       <ul>
         {users.map((user, index) => (
@@ -132,6 +142,7 @@ function App() {
       <div id="handCards"></div>
       <h4>{illegal}</h4>
       <button onClick={dealCards}>give me my cards</button>
+      </div>
     </div>
   );
 }
