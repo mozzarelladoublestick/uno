@@ -9,15 +9,18 @@ const socket = socketIO.connect('http://localhost:4000');
 
 function UnoGame() {
   const { isAuthenticated } = useAuth0();
-  const [message, setMessage] = useState('yello');
+  const [message, setMessage] = useState();
   const [users, setUsers] = useState([]);
   const [handCards, setHandCards] = useState([]);
   const [illegal, setIllegal] = useState("")
+
+  const [username, setUsername] = useState('');
   let isFirstCard = true;
   useEffect(() => {
     socket.on('login', (data) => {
       setUsers((prevUsers) => [...prevUsers, data.text])
-    
+      setUsername(data.text); 
+      console.log(username);
 
     });
     socket.on('yourCards', (data) => {
@@ -46,8 +49,8 @@ function UnoGame() {
       setIllegal("you cannot do this. only move card same color or same number ok thank u");
     });
     socket.on('endGame', (data)=>{
-      setMessage(data.username + " won the game");
-      console.log(data.username + " won the game")
+      setMessage("game has ended");
+      document. getElementById("game"). className = "hide";
     })
     return () => {
       // Clean up event listeners when the component is unmounted
@@ -56,7 +59,9 @@ function UnoGame() {
       socket.off('movedToDiscardPile');
       socket.off('illegalMove');
       socket.off('drawCard')
-      // Remove other event listeners here
+      socket.off('connection');
+      socket.off('disonnect')
+      // Remove other event listenes here
     };
   }, []);
 
@@ -96,7 +101,6 @@ function UnoGame() {
     socket.emit('drawCard');
   }
 
-  const [username, setUsername] = useState('');
 
   function login() {
     socket.emit('login', {
@@ -131,20 +135,24 @@ function UnoGame() {
 
     }
     isFirstCard = false;
-   
     const handCardsContainer = document.getElementById('handCards');
     const remainingHandCards = handCardsContainer.getElementsByClassName('card');
    console.log(remainingHandCards);
    console.log(remainingHandCards.length);
     if(remainingHandCards.length<3){
-      console.log("kleiner 3")
-      socket.emit('endGame', {
-        username: username,
-        socketID: socket.id
-      });
+ endGame();
     }
     
   }
+  function endGame(){
+
+    console.log(username);
+  socket.emit('endGame', {
+    username: username,
+    socketID: socket.id
+  });
+ 
+}
 
   if (!isAuthenticated) {
     return <Navigate to="/" />;
@@ -177,10 +185,11 @@ function UnoGame() {
       </div>
       <div id="handCards"></div>
       <h4>{illegal}</h4>
-      <h4> {message}</h4>
+
+     
       <button onClick={dealCards}>give me my cards</button>
       </div>
-      <LogoutButton />
+      <h2> {message}</h2>
     </div>
   );
 }
