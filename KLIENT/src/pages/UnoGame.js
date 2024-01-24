@@ -46,6 +46,7 @@ function UnoGame() {
     });
     socket.on('endGame', (data)=>{
       setMessage("game has ended");
+      document. getElementById("game"). className = "hide";
     })
     return () => {
       // Clean up event listeners when the component is unmounted
@@ -140,7 +141,7 @@ function UnoGame() {
     
   }
   function endGame(){
-    document. getElementById("game"). className = "hide";
+
     console.log(username);
   socket.emit('endGame', {
     username: username,
