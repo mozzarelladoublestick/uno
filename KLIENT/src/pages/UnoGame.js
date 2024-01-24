@@ -2,10 +2,13 @@ import socketIO from 'socket.io-client';
 import React, { useEffect, useState, useRef } from 'react';
 import '../App.css';
 import LogoutButton from '../compontents/LogoutButton';
+import { useAuth0 } from '@auth0/auth0-react';
+import { Navigate } from 'react-router-dom';
 
 const socket = socketIO.connect('http://localhost:4000');
 
 function UnoGame() {
+  const { isAuthenticated } = useAuth0();
   const [message, setMessage] = useState('yello');
   const [users, setUsers] = useState([]);
   const [handCards, setHandCards] = useState([]);
@@ -143,6 +146,9 @@ function UnoGame() {
     
   }
 
+  if (!isAuthenticated) {
+    return <Navigate to="/" />;
+  }
 
 
   return (
