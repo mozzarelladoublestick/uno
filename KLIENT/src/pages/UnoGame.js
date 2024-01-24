@@ -190,6 +190,7 @@ function UnoGame() {
       <button onClick={dealCards}>give me my cards</button>
       </div>
       <h2> {message}</h2>
+      <LogoutButton />
     </div>
   );
 }
