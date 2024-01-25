@@ -139,7 +139,7 @@ function UnoGame() {
     const remainingHandCards = handCardsContainer.getElementsByClassName('card');
    console.log(remainingHandCards);
    console.log(remainingHandCards.length);
-    if(remainingHandCards.length<3){
+    if(remainingHandCards.length === 0){
  endGame();
     }
     
