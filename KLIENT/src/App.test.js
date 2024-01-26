@@ -1,8 +1,19 @@
-import { render, screen } from '@testing-library/react';
-import App from './App';
+import UnoGame from "./pages/UnoGame";
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import 'setimmediate';
+test("dealCards", async () => {
+  render(<UnoGame />);
+  const login = screen.getByTestId("login");
+  const dealCardsButton = screen.getByTestId("deal");
+  const handCardsContainer = screen.getByTestId("handCards");
 
-test('renders learn react link', () => {
-  render(<App />);
-  const linkElement = screen.getByText(/learn react/i);
-  expect(linkElement).toBeInTheDocument();
+  fireEvent.click(login);
+  fireEvent.click(dealCardsButton);
+
+
+  setTimeout(()=> {
+    expect(handCardsContainer.children.length).toBe(7);
+ }
+ ,500);
+  // Wait for the asynchronous operation to complete
 });

@@ -3,8 +3,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import '../App.css';
 import LogoutButton from '../compontents/LogoutButton';
 import { useAuth0 } from '@auth0/auth0-react';
-import { Navigate } from 'react-router-dom';
-
+import { Navigate, BrowserRouter as Router } from "react-router-dom";
 const socket = socketIO.connect('http://localhost:4000');
 
 function UnoGame() {
@@ -91,6 +90,7 @@ function UnoGame() {
     };
     const handCards = document.getElementById('handCards');
     handCards.appendChild(card);
+    console.log(handCards.children.length);
   }
 
   function dealCards() {
@@ -155,7 +155,9 @@ function UnoGame() {
 }
 
   if (!isAuthenticated) {
+    <Router>
     return <Navigate to="/" />;
+    </Router>
   }
 
 
@@ -169,7 +171,7 @@ function UnoGame() {
         Username:
         <input type="text" value={username} onChange={(e) => setUsername(e.target.value)} />
       </label>
-      <button onClick={login}>start game</button>
+      <button data-testid="login" onClick={login}>start game</button>
       </div>
       <div id="game" className='hide'>
       <h2>Users</h2>
@@ -179,15 +181,15 @@ function UnoGame() {
         ))}
       </ul>
       <div id="discardPile"></div>
-      <div onClick={drawCard} id="drawPile">
+      <div onClick={drawCard} id="drawPile" data-testid="drawCard">
         <img src="/UNO_Logo.png" width="80" alt="UNO Logo" />
 
       </div>
-      <div id="handCards"></div>
+      <div id="handCards" data-testid="handCards"></div>
       <h4>{illegal}</h4>
 
      
-      <button onClick={dealCards}>give me my cards</button>
+      <button onClick={dealCards} data-testid="deal">give me my cards</button>
       </div>
       <h2> {message}</h2>
       <LogoutButton />

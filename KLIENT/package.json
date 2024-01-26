@@ -38,6 +38,7 @@
     ]
   },
   "devDependencies": {
-    "react-router-dom": "^6.21.3"
+    "react-router-dom": "^6.21.3",
+    "setimmediate": "^1.0.5"
   }
 }
