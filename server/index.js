@@ -8,6 +8,8 @@ const cors = require('cors');
 const drawPile = [];
 const discardPile = [];
 
+let currentPlayer = null;
+
 app.use(cors());
 
 const socketIO = require('socket.io')(http, {
@@ -39,9 +41,28 @@ socketIO.on('connection', (socket) => {
   console.log(`⚡: ${socket.id} user just connected!`);
   users.push(socket.id);
   console.log(users);
+
+  // Initialisierung des aktuellen Spielers
+  if (currentPlayer === null) {
+    currentPlayer = socket.id;
+    console.log("currentPlayer: " + currentPlayer);
+  }
+
   socket.on('disconnect', () => {
     console.log('🔥: A user disconnected');
+    // Entferne den Benutzer aus der Liste
+    users = users.filter(user => user !== socket.id);
+    console.log(users);
+
+    // Wenn der ausgeschiedene Spieler der aktuelle Spieler ist, aktualisiere den aktuellen Spieler
+    if (currentPlayer === socket.id) {
+      currentPlayer = (users.length > 0) ? users[0] : null;
+
+      // Sende eine Nachricht an alle Clients, um den aktuellen Spieler zu aktualisieren
+      socketIO.emit('updateCurrentPlayer', { currentPlayer: currentPlayer });
+    }
   });
+
 
   socket.on('login', (data) => {
     console.log(data.username);
@@ -95,6 +116,15 @@ socketIO.on('connection', (socket) => {
   })
 
   socket.on('moveToDiscardPile', (data) => {
+
+    // Überprüfe, ob der Spieler an der Reihe ist
+    if (socket.id !== currentPlayer) {
+      socket.emit('notYourTurn');
+      console.log("not your turn");
+      console.log("currentPlayer: " + currentPlayer);
+      return;
+    }
+
     const cardNumber = data.cardNumber;
     const cardColor = data.cardColor;
     const lastCardOnDiscardPile = discardPile[discardPile.length - 1];
@@ -106,13 +136,15 @@ socketIO.on('connection', (socket) => {
         cardNumber: cardNumber,
         cardColor: cardColor
       });
+
+      // Aktualisiere den aktuellen Spieler für den nächsten Zug
+      currentPlayer = (currentPlayer === users[0]) ? users[1] : users[0];
+
+      // Sende eine Nachricht an alle Clients, um den aktuellen Spieler zu aktualisieren
+      socketIO.emit('updateCurrentPlayer', { currentPlayer: currentPlayer });
     } else {
       socket.emit('illegalMove');
     }
-
-
-
-
   });
 });
 
