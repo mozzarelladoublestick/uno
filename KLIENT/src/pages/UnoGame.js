@@ -12,6 +12,7 @@ function UnoGame() {
   const [users, setUsers] = useState([]);
   const [handCards, setHandCards] = useState([]);
   const [illegal, setIllegal] = useState("")
+  const [currentPlayer, setCurrentPlayer] = useState(null);
 
   const [username, setUsername] = useState('');
   let isFirstCard = true;
@@ -22,6 +23,11 @@ function UnoGame() {
       console.log(username);
 
     });
+
+    socket.on('updateCurrentPlayer', (data) => {
+      setCurrentPlayer(data.currentPlayer);
+    });
+
     socket.on('yourCards', (data) => {
       const cardsString = data.cards;
       const cards = cardsString.split(',');
@@ -60,6 +66,7 @@ function UnoGame() {
       socket.off('drawCard')
       socket.off('connection');
       socket.off('disonnect')
+      socket.off('updateCurrentPlayer');
       // Remove other event listenes here
     };
   }, []);
@@ -175,6 +182,7 @@ function UnoGame() {
       </div>
       <div id="game" className='hide'>
       <h2>Users</h2>
+      <p>Current Player: {currentPlayer}</p> {/* Hier wird der aktuelle Spieler angezeigt */}
       <ul>
         {users.map((user, index) => (
           <li key={index}>{user}</li>
