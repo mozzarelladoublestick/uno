@@ -105,6 +105,12 @@ socketIO.on('connection', (socket) => {
     } else {
       const card = deck.pop();
       socketIO.to(socket.id).emit('drawCard', { card: card });
+
+       // Der Spieler, der die Karte gezogen hat, ist nicht mehr dran
+      currentPlayer = (currentPlayer === users[0]) ? users[1] : users[0];
+
+      // Sende eine Nachricht an alle Clients, um den aktuellen Spieler zu aktualisieren
+      socketIO.emit('updateCurrentPlayer', { currentPlayer: currentPlayer });
     }
   });
   socket.on('endGame', (data)=>{
