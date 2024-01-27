@@ -19,7 +19,7 @@ function UnoGame() {
   useEffect(() => {
     socket.on('login', (data) => {
       setUsers((prevUsers) => [...prevUsers, data.text])
-      setUsername(data.text); 
+      setUsername(data.text);
       console.log(username);
 
     });
@@ -31,6 +31,7 @@ function UnoGame() {
     socket.on('yourCards', (data) => {
       const cardsString = data.cards;
       const cards = cardsString.split(',');
+      const handcardButton = document.getElementById('handcard-button');
 
       cards.forEach((cardText) => {
         let contents = cardText.split(' ');
@@ -39,6 +40,9 @@ function UnoGame() {
         addCard(cardNumber, cardColor);
 
       });
+
+      handcardButton.remove();
+
     });
     socket.on('drawCard', (data) => {
       const cardText = data.card;
@@ -53,9 +57,9 @@ function UnoGame() {
     socket.on('illegalMove', () => {
       setIllegal("you cannot do this. only move card same color or same number ok thank u");
     });
-    socket.on('endGame', (data)=>{
+    socket.on('endGame', (data) => {
       setMessage("game has ended");
-      document. getElementById("game"). className = "hide";
+      document.getElementById("game").className = "hide";
     })
     return () => {
       // Clean up event listeners when the component is unmounted
@@ -114,8 +118,8 @@ function UnoGame() {
       username: username,
       socketID: socket.id
     });
-    document. getElementById("login"). className = "hide";
-    document. getElementById("game"). className = "show";
+    document.getElementById("login").className = "hide";
+    document.getElementById("game").className = "show";
   }
 
   function movedCardToDiscardPile(cardColor, cardNumber) {
@@ -144,60 +148,66 @@ function UnoGame() {
     isFirstCard = false;
     const handCardsContainer = document.getElementById('handCards');
     const remainingHandCards = handCardsContainer.getElementsByClassName('card');
-   console.log(remainingHandCards);
-   console.log(remainingHandCards.length);
-    if(remainingHandCards.length === 0){
- endGame();
+    console.log(remainingHandCards);
+    console.log(remainingHandCards.length);
+    if (remainingHandCards.length === 0) {
+      endGame();
     }
-    
+
   }
-  function endGame(){
+  function endGame() {
 
     console.log(username);
-  socket.emit('endGame', {
-    username: username,
-    socketID: socket.id
-  });
- 
-}
+    socket.emit('endGame', {
+      username: username,
+      socketID: socket.id
+    });
+
+  }
 
   if (!isAuthenticated) {
     <Router>
-    return <Navigate to="/" />;
+      return <Navigate to="/" />;
     </Router>
   }
 
 
   return (
     <div>
-    <div className='App'>
-    </div>
+      <div className='App'>
+      </div>
       <div id="login">
-      <h2>Login</h2>
-      <label>
-        Username:
-        <input type="text" value={username} onChange={(e) => setUsername(e.target.value)} />
-      </label>
-      <button data-testid="login" onClick={login}>start game</button>
+        <div className='login-container'>
+          <img className='logo' src="/UNO_Logo.png" width="80" alt="UNO Logo" />
+          <h2>Login</h2>
+          <label>
+            Gib deinen Username ein:
+          </label>
+          <input type="text" value={username} onChange={(e) => setUsername(e.target.value)} />
+
+          <button className='login-button' data-testid="login" onClick={login}>start game</button>
+        </div>
       </div>
       <div id="game" className='hide'>
-      <h2>Users</h2>
-      <p>Current Player: {currentPlayer}</p> {/* Hier wird der aktuelle Spieler angezeigt */}
-      <ul>
-        {users.map((user, index) => (
-          <li key={index}>{user}</li>
-        ))}
-      </ul>
-      <div id="discardPile"></div>
-      <div onClick={drawCard} id="drawPile" data-testid="drawCard">
-        <img src="/UNO_Logo.png" width="80" alt="UNO Logo" />
+        <div className='game-container'>
+          <h2>Users</h2>
+          <p>Current Player: {currentPlayer}</p> {/* Hier wird der aktuelle Spieler angezeigt */}
+          <ul>
+            {users.map((user, index) => (
+              <li key={index}>{user}</li>
+            ))}
+          </ul>
+          <div id="discardPile"></div>
+          <div onClick={drawCard} id="drawPile" data-testid="drawCard">
+            <img src="/UNO_Logo.png" width="80" alt="UNO Logo" />
 
-      </div>
-      <div id="handCards" data-testid="handCards"></div>
-      <h4>{illegal}</h4>
+          </div>
+          <div id="handCards" data-testid="handCards"></div>
+          <h4>{illegal}</h4>
 
-     
-      <button onClick={dealCards} data-testid="deal">give me my cards</button>
+
+          <button className='login-button' id='handcard-button' onClick={dealCards} data-testid="deal">give me my cards</button>
+        </div>
       </div>
       <h2> {message}</h2>
       <LogoutButton />
@@ -206,12 +216,3 @@ function UnoGame() {
 }
 
 export default UnoGame;
-
-
-/*
-
-<div>
-      
-      
-
-*/ 
