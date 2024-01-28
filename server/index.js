@@ -36,6 +36,16 @@ function isMoveLegal(cardColor, cardNumber, card2) {
   return color1 === color2 || number1 === number2;
 }
 
+function updateCurrentPlayer(currentPlayerIndex, totalPlayers) {
+  // Stelle sicher, dass der Index innerhalb des Bereichs liegt
+  currentPlayerIndex = (currentPlayerIndex + 1) % totalPlayers;
+  console.log("currentPlayerIndex: " + currentPlayerIndex);
+
+  // Gib den Index des nächsten Spielers zurück
+  return currentPlayerIndex;
+  
+}
+
 
 socketIO.on('connection', (socket) => {
   console.log(`⚡: ${socket.id} user just connected!`);
@@ -113,7 +123,8 @@ socketIO.on('connection', (socket) => {
       socketIO.to(socket.id).emit('drawCard', { card: card });
   
       // Update the current player for the next turn
-      currentPlayer = (currentPlayer === users[0]) ? users[1] : users[0];
+      const currentPlayerIndex = users.indexOf(currentPlayer);
+      currentPlayer = users[updateCurrentPlayer(currentPlayerIndex, users.length)];
   
       // Broadcast the updated current player to all clients
       socketIO.emit('updateCurrentPlayer', { currentPlayer: currentPlayer });
@@ -150,11 +161,13 @@ socketIO.on('connection', (socket) => {
         cardColor: cardColor
       });
 
-      // Aktualisiere den aktuellen Spieler für den nächsten Zug
-      currentPlayer = (currentPlayer === users[0]) ? users[1] : users[0];
+      // Update the current player for the next turn
+      const currentPlayerIndex = users.indexOf(currentPlayer);
+      currentPlayer = users[updateCurrentPlayer(currentPlayerIndex, users.length)];
 
       // Sende eine Nachricht an alle Clients, um den aktuellen Spieler zu aktualisieren
       socketIO.emit('updateCurrentPlayer', { currentPlayer: currentPlayer });
+      
     } else {
       socket.emit('illegalMove');
     }

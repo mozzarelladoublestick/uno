@@ -45,7 +45,7 @@ function UnoGame() {
 
       });
 
-      //handcardButton.remove();
+      handcardButton.display = "none";
 
     });
     socket.on('drawCard', (data) => {
