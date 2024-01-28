@@ -100,19 +100,26 @@ socketIO.on('connection', (socket) => {
   });
 
   socket.on('drawCard', () => {
+    // Check if it's the current player's turn
+    if (socket.id !== currentPlayer) {
+      socket.emit('notYourTurn');
+      return;
+    }
+  
     if (deck.length === 0) {
       socket.emit('noMoreCards');
     } else {
       const card = deck.pop();
       socketIO.to(socket.id).emit('drawCard', { card: card });
-
-       // Der Spieler, der die Karte gezogen hat, ist nicht mehr dran
+  
+      // Update the current player for the next turn
       currentPlayer = (currentPlayer === users[0]) ? users[1] : users[0];
-
-      // Sende eine Nachricht an alle Clients, um den aktuellen Spieler zu aktualisieren
+  
+      // Broadcast the updated current player to all clients
       socketIO.emit('updateCurrentPlayer', { currentPlayer: currentPlayer });
     }
   });
+  
   socket.on('endGame', (data)=>{
     console.log("kleiner")
     socketIO.emit('endGame', {

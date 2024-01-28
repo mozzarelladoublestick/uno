@@ -24,6 +24,10 @@ function UnoGame() {
 
     });
 
+    socket.on('notYourTurn', () => {
+      setIllegal("it is not your turn");
+    });
+
     socket.on('updateCurrentPlayer', (data) => {
       setCurrentPlayer(data.currentPlayer);
     });
@@ -71,6 +75,7 @@ function UnoGame() {
       socket.off('connection');
       socket.off('disonnect')
       socket.off('updateCurrentPlayer');
+      socket.off('notYourTurn');
       // Remove other event listenes here
     };
   }, []);
@@ -109,6 +114,12 @@ function UnoGame() {
   }
 
   function drawCard() {
+    // Check if it's the current player's turn
+    if (socket.id !== currentPlayer) {
+      setIllegal("it is not your turn");
+      return;
+    }
+  
     socket.emit('drawCard');
   }
 
