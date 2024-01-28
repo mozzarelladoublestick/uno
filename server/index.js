@@ -100,6 +100,14 @@ socketIO.on('connection', (socket) => {
   });
 
   socket.on('drawCard', () => {
+// Überprüfe, ob der Spieler an der Reihe ist
+if (socket.id !== currentPlayer) {
+  socket.emit('notYourTurn');
+  console.log("not your turn");
+  console.log("currentPlayer: " + currentPlayer);
+  return;
+}
+
     if (deck.length === 0) {
       socket.emit('noMoreCards');
     } else {
