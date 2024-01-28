@@ -3,7 +3,7 @@ import LoginButton from '../compontents/LoginButton';
 const Login = () => {
     return (
         <>
-        <LoginButton />
+        <LoginButton data-testid="login"/>
         </>
       )    
   };

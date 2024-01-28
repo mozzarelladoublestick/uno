@@ -45,7 +45,7 @@ function UnoGame() {
 
       });
 
-      handcardButton.remove();
+      //handcardButton.remove();
 
     });
     socket.on('drawCard', (data) => {
@@ -208,7 +208,7 @@ function UnoGame() {
               <li key={index}>{user}</li>
             ))}
           </ul>
-          <div id="discardPile"></div>
+          <div id="discardPile" data-testid="discardPile"></div>
           <div onClick={drawCard} id="drawPile" data-testid="drawCard">
             <img src="/UNO_Logo.png" width="80" alt="UNO Logo" />
 
