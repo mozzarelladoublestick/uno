@@ -13,15 +13,15 @@ const LoginButton = () => {
     return (
       <div>
         <Profile/>
-        <h4> Sie sind erfolgreich authenticated wora! </h4>
-        <Link to="/unoGame"> Weiter </Link>
+        <h4> Sie wurden erfolgreich authentifiziert! </h4>
+        <Link className="login-button" to="/unoGame"> Weiter </Link>
         <br />
       </div>
     );
   }
 
 
-  return <button onClick={() => loginWithRedirect()}>Log In</button>;
+  return <button className='login-button' onClick={() => loginWithRedirect()}>Log In</button>;
 };
 
 export default LoginButton;

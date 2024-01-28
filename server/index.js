@@ -119,7 +119,7 @@ socketIO.on('connection', (socket) => {
       socketIO.emit('updateCurrentPlayer', { currentPlayer: currentPlayer });
     }
   });
-  
+
   socket.on('endGame', (data)=>{
     console.log("kleiner")
     socketIO.emit('endGame', {
