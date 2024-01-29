@@ -77,31 +77,48 @@ socketIO.on('connection', (socket) => {
 
   socket.on('dealCards', () => {
     if (users.length > 1) {
-    if (deck.length === 0) {
-      const colors = ['red', 'blue', 'green', 'yellow'];
-      const numbers = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
-      deck = [];
+      if (deck.length === 0) {
+        const colors = ['red', 'blue', 'green', 'yellow'];
+        const numbers = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+        deck = [];
 
-      for (const color of colors) {
-        for (const number of numbers) {
-          deck.push(`${color} ${number}`);
+        for (const color of colors) {
+          for (const number of numbers) {
+            deck.push(`${color} ${number}`);
+          }
         }
+
+        shuffleDeck();
+        users.forEach(user => {
+          const playerCards = deck.splice(0, 7);
+          socketIO.to(user).emit('yourCards', { cards: playerCards.join(',') });
+
+        });
+
+        const firstCard = deck.pop();
+        console.log("first card: " + firstCard);
+
+        const firstCardContents = firstCard.split(" ");
+        const cardColor = firstCardContents[0];
+        const cardNumber = firstCardContents[1];
+        const cardText = `${cardNumber} ${cardColor}`;
+        discardPile.push(cardText);
+
+        socketIO.emit('movedToDiscardPile', {
+          cardNumber: cardNumber,
+          cardColor: cardColor
+        });
+
+
+
+
       }
 
-      shuffleDeck();
-      users.forEach(user => {
-        const playerCards = deck.splice(0, 7);
-        socketIO.to(user).emit('yourCards', { cards: playerCards.join(',') });
-
-      });
-
+      // const playerCards = deck.splice(0, 7);
+      // socketIO.to(socket.id).emit('yourCards', { cards: playerCards.join(',') });
+    } else {
+      socketIO.emit('notEnoughPlayers');
     }
-
-    // const playerCards = deck.splice(0, 7);
-    // socketIO.to(socket.id).emit('yourCards', { cards: playerCards.join(',') });
-  } else {
-    socketIO.emit('notEnoughPlayers');
-  }
 
   });
 
