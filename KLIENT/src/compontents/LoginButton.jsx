@@ -6,7 +6,7 @@ import Profile from "./Profile";
 
 
 const LoginButton = () => {
-  const { loginWithRedirect } = useAuth0();
+  const { loginWithPopup } = useAuth0();
   const { user, isAuthenticated, isLoading } = useAuth0();
 
   if (isAuthenticated) {
@@ -21,7 +21,11 @@ const LoginButton = () => {
   }
 
 
-  return <button className='login-button' onClick={() => loginWithRedirect()}>Log In</button>;
+  return (
+    <button className="login-button" onClick={() => loginWithPopup()}> 
+      Log In
+    </button>
+  );
 };
 
 export default LoginButton;
