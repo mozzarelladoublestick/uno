@@ -32,18 +32,15 @@ function isMoveLegal(cardColor, cardNumber, card2) {
   const [color1, number1] = card1.split(" ");
   const [color2, number2] = card2.split(" ");
 
-  // Check if the colors match or the numbers match
   return color1 === color2 || number1 === number2;
 }
 
 function updateCurrentPlayer(currentPlayerIndex, totalPlayers) {
-  // Stelle sicher, dass der Index innerhalb des Bereichs liegt
   currentPlayerIndex = (currentPlayerIndex + 1) % totalPlayers;
   console.log("currentPlayerIndex: " + currentPlayerIndex);
 
-  // Gib den Index des nächsten Spielers zurück
   return currentPlayerIndex;
-  
+
 }
 
 
@@ -52,7 +49,6 @@ socketIO.on('connection', (socket) => {
   users.push(socket.id);
   console.log(users);
 
-  // Initialisierung des aktuellen Spielers
   if (currentPlayer === null) {
     currentPlayer = socket.id;
     console.log("currentPlayer: " + currentPlayer);
@@ -60,15 +56,12 @@ socketIO.on('connection', (socket) => {
 
   socket.on('disconnect', () => {
     console.log('🔥: A user disconnected');
-    // Entferne den Benutzer aus der Liste
     users = users.filter(user => user !== socket.id);
     console.log(users);
 
-    // Wenn der ausgeschiedene Spieler der aktuelle Spieler ist, aktualisiere den aktuellen Spieler
     if (currentPlayer === socket.id) {
       currentPlayer = (users.length > 0) ? users[0] : null;
 
-      // Sende eine Nachricht an alle Clients, um den aktuellen Spieler zu aktualisieren
       socketIO.emit('updateCurrentPlayer', { currentPlayer: currentPlayer });
     }
   });
@@ -83,12 +76,12 @@ socketIO.on('connection', (socket) => {
   });
 
   socket.on('dealCards', () => {
+    if (users.length > 1) {
     if (deck.length === 0) {
       const colors = ['red', 'blue', 'green', 'yellow'];
       const numbers = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
       deck = [];
 
-      // Create Uno deck with cards of different colors and numbers
       for (const color of colors) {
         for (const number of numbers) {
           deck.push(`${color} ${number}`);
@@ -96,42 +89,42 @@ socketIO.on('connection', (socket) => {
       }
 
       shuffleDeck();
-      /* users.forEach(user => {
-         const playerCards = deck.splice(0, 7);
-         //socketIO.to(user).emit('yourCards', { cards: playerCards.join(',') }); fix thos
-         
-       });*/
+      users.forEach(user => {
+        const playerCards = deck.splice(0, 7);
+        socketIO.to(user).emit('yourCards', { cards: playerCards.join(',') });
+
+      });
 
     }
 
-    // Deal 7 cards to each player
-    const playerCards = deck.splice(0, 7);
-    socketIO.to(socket.id).emit('yourCards', { cards: playerCards.join(',') });
+    // const playerCards = deck.splice(0, 7);
+    // socketIO.to(socket.id).emit('yourCards', { cards: playerCards.join(',') });
+  } else {
+    socketIO.emit('notEnoughPlayers');
+  }
+
   });
 
   socket.on('drawCard', () => {
-    // Check if it's the current player's turn
     if (socket.id !== currentPlayer) {
       socket.emit('notYourTurn');
       return;
     }
-  
+
     if (deck.length === 0) {
       socket.emit('noMoreCards');
     } else {
       const card = deck.pop();
       socketIO.to(socket.id).emit('drawCard', { card: card });
-  
-      // Update the current player for the next turn
+
       const currentPlayerIndex = users.indexOf(currentPlayer);
       currentPlayer = users[updateCurrentPlayer(currentPlayerIndex, users.length)];
-  
-      // Broadcast the updated current player to all clients
+
       socketIO.emit('updateCurrentPlayer', { currentPlayer: currentPlayer });
     }
   });
 
-  socket.on('endGame', (data)=>{
+  socket.on('endGame', (data) => {
     console.log("kleiner")
     socketIO.emit('endGame', {
       username: data.username,
@@ -141,7 +134,6 @@ socketIO.on('connection', (socket) => {
 
   socket.on('moveToDiscardPile', (data) => {
 
-    // Überprüfe, ob der Spieler an der Reihe ist
     if (socket.id !== currentPlayer) {
       socket.emit('notYourTurn');
       console.log("not your turn");
@@ -152,7 +144,6 @@ socketIO.on('connection', (socket) => {
     const cardNumber = data.cardNumber;
     const cardColor = data.cardColor;
     const lastCardOnDiscardPile = discardPile[discardPile.length - 1];
-    // Check if the move is legal according to Uno rules
     if (!lastCardOnDiscardPile || isMoveLegal(cardNumber, cardColor, lastCardOnDiscardPile)) {
       let cardText = cardNumber + " " + cardColor;
       discardPile.push(cardText);
@@ -161,13 +152,11 @@ socketIO.on('connection', (socket) => {
         cardColor: cardColor
       });
 
-      // Update the current player for the next turn
       const currentPlayerIndex = users.indexOf(currentPlayer);
       currentPlayer = users[updateCurrentPlayer(currentPlayerIndex, users.length)];
 
-      // Sende eine Nachricht an alle Clients, um den aktuellen Spieler zu aktualisieren
       socketIO.emit('updateCurrentPlayer', { currentPlayer: currentPlayer });
-      
+
     } else {
       socket.emit('illegalMove');
     }

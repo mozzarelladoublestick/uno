@@ -24,6 +24,10 @@ function UnoGame() {
 
     });
 
+    socket.on('notEnoughPlayers', () => {
+      setIllegal("not enough players");
+    });
+
     socket.on('notYourTurn', () => {
       setIllegal("it is not your turn");
     });
@@ -36,16 +40,13 @@ function UnoGame() {
       const cardsString = data.cards;
       const cards = cardsString.split(',');
       const handcardButton = document.getElementById('handcard-button');
-
+      handcardButton.className = "hide";
       cards.forEach((cardText) => {
         let contents = cardText.split(' ');
         let cardColor = contents[0];
         let cardNumber = contents[1];
         addCard(cardNumber, cardColor);
-
       });
-
-      handcardButton.display = "none";
 
     });
     socket.on('drawCard', (data) => {
@@ -68,6 +69,7 @@ function UnoGame() {
     return () => {
       // Clean up event listeners when the component is unmounted
       socket.off('login');
+      socket.off('notEnoughPlayers');
       socket.off('yourCards');
       socket.off('movedToDiscardPile');
       socket.off('illegalMove');
@@ -83,7 +85,7 @@ function UnoGame() {
   function startGame() {
     console.log("sent message");
     socket.emit('start', {
-      text: message, // Use 'text' instead of 'message'
+      text: message,
       socketID: socket.id,
     });
 
@@ -111,15 +113,14 @@ function UnoGame() {
 
   function dealCards() {
     socket.emit('dealCards');
+
   }
 
   function drawCard() {
-    // Check if it's the current player's turn
     if (socket.id !== currentPlayer) {
       setIllegal("it is not your turn");
       return;
     }
-  
     socket.emit('drawCard');
   }
 
@@ -202,7 +203,7 @@ function UnoGame() {
       <div id="game" className='hide'>
         <div className='game-container'>
           <h2>Users</h2>
-          <p>Current Player: {currentPlayer}</p> {/* Hier wird der aktuelle Spieler angezeigt */}
+          <p>Current Player: {currentPlayer}</p> { }
           <ul>
             {users.map((user, index) => (
               <li key={index}>{user}</li>
