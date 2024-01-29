@@ -178,9 +178,7 @@ function UnoGame() {
   }
 
   if (!isAuthenticated) {
-    <Router>
-      return <Navigate to="/" />;
-    </Router>
+    return <Navigate to="/" />;
   }
 
 
