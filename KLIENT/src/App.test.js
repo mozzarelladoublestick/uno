@@ -60,6 +60,9 @@ test("drawCard", async () => {
   // Wait for the asynchronous operation to complete
 });	
 
+
+//We tried the next two following tests, but they are like us, a big failure, so we commented them out
+
 //Test that the player can't play a card if it's not their turn
 /*test("playCardNotYourTurn", async () => {
   render(<UnoGame />);
