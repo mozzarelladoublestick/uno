@@ -1,5 +1,7 @@
 {
   "dependencies": {
-    "@auth0/auth0-react": "^2.2.4"
+    "@auth0/auth0-react": "^2.2.4",
+    "@testing-library/jest-dom": "github:testing-library/jest-dom",
+    "react-scripts": "^5.0.1"
   }
 }
