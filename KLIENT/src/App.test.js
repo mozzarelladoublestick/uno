@@ -13,10 +13,7 @@ test('authenticationRedirect', async () => {
       </Routes>
     </MemoryRouter>
   );
-
-  // Assuming that UnoGame redirects to "/" when not authenticated
   await waitFor(() => {
-    // Verify that the user is redirected to the login page
     expect(screen.getByTestId('login')).toBeInTheDocument();
   });
 });
@@ -37,7 +34,6 @@ test("dealCards", async () => {
     expect(handCardsContainer.children.length).toBe(7);
  }
  ,1000);
-  // Wait for the asynchronous operation to complete
 });
 
 
@@ -57,7 +53,7 @@ test("drawCard", async () => {
     expect(handCardsContainer.children.length).toBe(8);
  }
  ,1000);
-  // Wait for the asynchronous operation to complete
+
 });	
 
 
@@ -90,7 +86,6 @@ test("drawCard", async () => {
     expect(discardPileContainer.children.length).toBe(2);
  }
  ,1500);
-  // Wait for the asynchronous operation to complete
 });
 
 //Test that the player can play a card if it's their turn
@@ -118,7 +113,6 @@ test("playCardYourTurn", async () => {
     expect(discardPileContainer.children.length).toBe(3);
  }
  ,1500);
-  // Wait for the asynchronous operation to complete
 });
 
 */
