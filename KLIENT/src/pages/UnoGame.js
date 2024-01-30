@@ -13,6 +13,7 @@ function UnoGame() {
   const [handCards, setHandCards] = useState([]);
   const [illegal, setIllegal] = useState("")
   const [currentPlayer, setCurrentPlayer] = useState(null);
+  const [yourTurn, setYourTurn] = useState('');
 
   const [username, setUsername] = useState('');
   let isFirstCard = true;
@@ -34,6 +35,13 @@ function UnoGame() {
 
     socket.on('updateCurrentPlayer', (data) => {
       setCurrentPlayer(data.currentPlayer);
+      const yourTurnLight = document.getElementById('your-turn');
+
+      if(data.currentPlayer === socket.id){
+        setYourTurn('🟢 Du bist dran!');
+      } else if (data.currentPlayer !== socket.id){
+        setYourTurn('🔴 Ein anderer Spieler spielt')
+      }
     });
 
     socket.on('yourCards', (data) => {
@@ -201,12 +209,14 @@ function UnoGame() {
       <div id="game" className='hide'>
         <div className='game-container'>
           <h2>Users</h2>
-          <p>Current Player: {currentPlayer}</p> { }
+          {/* <p>Current Player: {currentPlayer}</p> { } */}
           <ul>
             {users.map((user, index) => (
               <li key={index}>{user}</li>
             ))}
           </ul>
+          <div id='your-turn'>{yourTurn}</div>
+
           <div id="discardPile" data-testid="discardPile"></div>
           <div onClick={drawCard} id="drawPile" data-testid="drawCard">
             <img src="/UNO_Logo.png" width="80" alt="UNO Logo" />

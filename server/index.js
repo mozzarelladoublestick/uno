@@ -52,6 +52,7 @@ socketIO.on('connection', (socket) => {
   if (currentPlayer === null) {
     currentPlayer = socket.id;
     console.log("currentPlayer: " + currentPlayer);
+
   }
 
   socket.on('disconnect', () => {
@@ -76,7 +77,10 @@ socketIO.on('connection', (socket) => {
   });
 
   socket.on('dealCards', () => {
+
     if (users.length > 1) {
+      socketIO.emit('updateCurrentPlayer', { currentPlayer: currentPlayer });
+
       if (deck.length === 0) {
         const colors = ['red', 'blue', 'green', 'yellow'];
         const numbers = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
