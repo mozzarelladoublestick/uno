@@ -99,7 +99,7 @@ socketIO.on('connection', (socket) => {
         });
 
         const firstCard = deck.pop();
-        console.log("first card: " + firstCard);
+        console.log("first card: " + firstCard);    
 
         const firstCardContents = firstCard.split(" ");
         const cardColor = firstCardContents[0];
