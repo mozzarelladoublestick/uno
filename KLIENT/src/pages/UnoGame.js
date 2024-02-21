@@ -75,6 +75,8 @@ function UnoGame() {
       setMessage("game has ended");
       document.getElementById("game").className = "hide";
     })
+
+    // Very nice that you actually clean up the socket subscription.
     return () => {
       // Clean up event listeners when the component is unmounted
       socket.off('login');
@@ -91,6 +93,8 @@ function UnoGame() {
     };
   }, []);
 
+  // This function could be a pure function just as well so it would not have to live
+  // within the component scope and would keep the complexity of the game component a bit lower
   function startGame() {
     console.log("sent message");
     socket.emit('start', {
@@ -115,6 +119,11 @@ function UnoGame() {
         socketID: socket.id
       });
     };
+    // Manipulating the dom directly wihin a react component is quite the antipattern.
+    // React maintains it's own virtual dom and when you start manipulating the actual dom
+    // you are mixing two worlds together, that do not mix well.
+    // you would be better off with saving the cards into a state and then render them in
+    // a jsx map.
     const handCards = document.getElementById('handCards');
     handCards.appendChild(card);
     console.log(handCards.children.length);
@@ -139,6 +148,9 @@ function UnoGame() {
       username: username,
       socketID: socket.id
     });
+    // Again, you would much rather save the current state of the component in a 
+    // local state with useState and then bind the classname based on the value of that 
+    // state in jsx, instead of manipulating the dom directly.
     document.getElementById("login").className = "hide";
     document.getElementById("game").className = "show";
   }
@@ -219,6 +231,10 @@ function UnoGame() {
           <div id='your-turn'>{yourTurn}</div>
 
           <div id="discardPile" data-testid="discardPile"></div>
+          {/* Semantically this would be a button instead of only a div. You can make the button 
+            element have no appearance and look like a div, but it will be easier to interact with 
+
+          */}
           <div onClick={drawCard} id="drawPile" data-testid="drawCard">
             <img src="/UNO_Logo.png" width="80" alt="UNO Logo" />
 

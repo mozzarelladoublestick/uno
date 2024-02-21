@@ -92,6 +92,7 @@ socketIO.on('connection', (socket) => {
         }
 
         shuffleDeck();
+        
         users.forEach(user => {
           const playerCards = deck.splice(0, 7);
           socketIO.to(user).emit('yourCards', { cards: playerCards.join(',') });
